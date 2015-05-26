@@ -1,0 +1,12 @@
+name: example
+
+update:
+  cars: write.csv(cars, 'cars.csv', row.names = FALSE)
+
+table:
+  organisms: organisms.csv
+  cars: cars.csv
+  systems: systems.csv
+
+keys:
+  organisms: ncbi_taxonomy_id
