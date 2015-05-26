@@ -1,4 +1,4 @@
-# Easy Database in R
+# Easy Databases with R
 
 This is an R package designed to streamline import and export to/from SQLite
 databases. With this package you can:
@@ -27,11 +27,12 @@ if (!require(devtools)) install.packages('devtools')
 devtools::install_github('ericedwardbryant/easydb')
 ```
 
-To build a database from a directory of plain text tables, all you need to do
-is add an easydb configuration file to this directory. This file is written in
-[YAML](http://www.yaml.org/spec/1.2/spec.html), so if you've written any
+To build a database, all you need to do is create an easydb configuration file.
+This file is written in [YAML](http://www.yaml.org/spec/1.2/spec.html) (if you've written any
 [Rmarkdown](http://rmarkdown.rstudio.com) documents then you know how to write
-a little YAML. Below is an example configuration file.
+a little YAML). Below is an example configuration file.
+
+**easydb.yaml:**
 
 ```yaml
 ## Scripts and paths should be written relative to this config file
