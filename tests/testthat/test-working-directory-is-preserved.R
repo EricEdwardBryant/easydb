@@ -6,7 +6,7 @@ test_that('Working directory is preserved', {
   wd <- getwd()
 
   # Check after updating source
-  db_update_source(example)
+  db_update(example)
   expect_equal(wd, getwd())
 
   # Check after building db

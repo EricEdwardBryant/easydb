@@ -53,8 +53,8 @@ db_add_table <- function(src, tbl_name, tbl_path, ...) {
 }
 
 
-#--db_update_source------------------------------------------------------------
-#' Update source tables
+#--db_update------------------------------------------------------------
+#' Run database update expressions
 #'
 #' Updates plain text source tables by evaluating R expressions in an easydb
 #' configuration file.
@@ -64,7 +64,7 @@ db_add_table <- function(src, tbl_name, tbl_path, ...) {
 #' @export
 #' @importFrom yaml yaml.load_file
 
-db_update_source <- function(cnf) {
+db_update <- function(cnf) {
   assert_that(is.string(cnf))
   upd <- yaml.load_file(cnf)$update
 

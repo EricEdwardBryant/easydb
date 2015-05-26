@@ -65,10 +65,10 @@ easydb::db_build('path/to/config.yaml')
 And you can update your tables in a single command:
 
 ```r
-easydb::db_update_source('path/to/config.yaml')
+easydb::db_update('path/to/config.yaml')
 ```
 
-`db_update_source` returns `path/to/config.yaml` so you can easily pipe to
+`db_update` returns `path/to/config.yaml` so you can easily pipe to
 `db_build` after updating. And since `db_build` returns a `src` connection, you
 can immediately begin querying your new database. The following silly example
 takes a path to a database configuration file, updates source tables, builds a
@@ -79,7 +79,7 @@ it's the circle of life.
 library(easydb)
 
 'path/to/config.yaml' %>%
-  db_update_source %>%
+  db_update %>%
   db_build %>%
   db_dump('~/Desktop')
 ```

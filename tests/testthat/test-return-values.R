@@ -1,7 +1,7 @@
 context('Test return values')
 
 test_that('Return values match expected format', {
-  cnf <- db_update_source(system.file('db/cnf.yaml', package = 'easydb'))
+  cnf <- db_update(system.file('db/cnf.yaml', package = 'easydb'))
   expect_match(cnf, '\\.yaml')
 
   src <- db_build(system.file('db/cnf.yaml', package = 'easydb'))

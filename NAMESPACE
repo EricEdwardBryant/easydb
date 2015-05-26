@@ -3,7 +3,7 @@
 export(db_add_table)
 export(db_build)
 export(db_dump)
-export(db_update_source)
+export(db_update)
 importFrom(DBI,dbWriteTable)
 importFrom(assertthat,assert_that)
 importFrom(assertthat,is.string)
