@@ -4,7 +4,7 @@ Title: Easy SQLite database management
 Version: 0.0.9000
 Date: 2015-05-26
 Authors@R: person("Eric", "Bryant", email = "eeb2139@columbia.edu", role = c("aut", "cre"))
-Description: Easily create and dump SQLite databases to and from plain text tables
+Description: Easily create and dump SQLite databases to and from plain text tables.
 License: GPL-3
 LazyData: TRUE
 Imports: DBI, assertthat, data.table, dplyr, yaml
