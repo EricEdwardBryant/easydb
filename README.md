@@ -35,7 +35,7 @@ a little YAML). Below is an example configuration file.
 
 ```yaml
 ## Update scripts and table paths are relative to this configuration file
-name: example  
+name: example.sqlite
 
 update:  # table_name: R expression
   cars: write.csv(cars, 'cars.csv', row.names = FALSE)

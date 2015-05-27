@@ -1,4 +1,4 @@
-"id","name","related","parent_id","definition"
+"system_id","system_name","relation","parent_system_id","system_description"
 "BIOGRID:0000039","Experimental System",NA,NA,NA
 "BIOGRID:0000040","Physical Interaction","is_a","BIOGRID:0000039",NA
 "BIOGRID:0000041","In Vivo","is_a","BIOGRID:0000040",NA

@@ -1,12 +1,13 @@
-name: example
+name: example.sqlite
 
 update:
   cars: write.csv(cars, 'cars.csv', row.names = FALSE)
 
 table:
-  organisms: organisms.csv
   cars: cars.csv
   systems: systems.csv
+  organisms: organisms   # a directory
 
 keys:
+  systems: system_id
   organisms: ncbi_taxonomy_id
