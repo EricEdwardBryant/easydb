@@ -21,8 +21,18 @@ db_build <- function(cnf) {
   old <- setwd(dirname(cnf))
   src <- src_sqlite(dbname, create = TRUE)
 
-  for (tbl in names(tbls)) db_add_table(src, tbl, tbls[[tbl]])
-
+  for (tbl in names(tbls)) {
+    tbl_path <- tbls[[tbl]]
+    if (is_dir(tbl_path)) {
+      tbl_path %>%
+        list.files %>%
+        lapply(fread) %>%
+        bind_rows %>%
+        dbWriteTable(src$con, tbl_name, ., overwrite = TRUE, row.names = FALSE)
+    } else {
+      db_add_table(src, tbl, tbl_path)
+    }
+  }
   on.exit(setwd(old))
   return(src)
 }
@@ -101,3 +111,6 @@ db_dump <- function(src, dir) {
 
   return(invisible(paste0(dir, '/', tbl_names, '.csv')))
 }
+
+#--utils-----------------------------------------------------------------------
+is_dir <- function(path) file.info(path)$isdir
