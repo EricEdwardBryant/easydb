@@ -82,13 +82,19 @@ db_import_table <- function(tbl_path, tbl_name, src, overwrite = !append,
 #' @importFrom yaml yaml.load_file
 
 db_update <- function(cnf) {
-  assert_that(is.string(cnf))
-  upd <- yaml.load_file(cnf)$update
-
+  assert_that(is.string(cnf), file.exists(cnf))
+  config <- yaml.load_file(cnf)
   # Update expressions are executed in the directory of cnf
   old <- setwd(dirname(cnf))
 
-  for (name in names(upd)) eval(parse(text = upd[[name]]))
+  if (is.null(config$update)) {
+    warning('No "update:" field in configuration file: ', cnf)
+  } else if (!is.list(config$update)) {
+    warning('"update:" field should be a list of "name: expression" pairs. ',
+            'No updates were performed.')
+  } else {
+    for (name in names(config$update)) eval(parse(text = config$update[[name]]))
+  }
   on.exit(setwd(old))
   return(invisible(cnf))
 }
@@ -137,3 +143,4 @@ db_write_table <- function(tbl, tbl_name, src, overwrite = !append,
     row.names = FALSE
   )
 }
+
