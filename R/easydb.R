@@ -44,9 +44,13 @@ db_build <- function(cnf) {
 #' automate chuncked reads for very large tables. Currently uses
 #' \link[data.table]{fread} for quickly reading plain text tables.
 #'
-#' @param src A database source.
 #' @param tbl_name String. The name of the table.
 #' @param tbl_path String. The path to the table.
+#' @param src A database source.
+#' @param overwrite Flag. Should an existing table be overwritten? Defaults to
+#' \code{!append}
+#' @param append Flag. Should an existing table be append? Defaults to
+#' \code{!overwrite}.
 #' @param ... Further arguments passed to \link[data.table]{fread}.
 #'
 #' @export

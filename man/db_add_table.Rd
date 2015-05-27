@@ -14,6 +14,12 @@ db_add_table(tbl_name, tbl_path, src, overwrite = !append,
 
 \item{src}{A database source.}
 
+\item{overwrite}{Flag. Should an existing table be overwritten? Defaults to
+\code{!append}}
+
+\item{append}{Flag. Should an existing table be append? Defaults to
+\code{!overwrite}.}
+
 \item{...}{Further arguments passed to \link[data.table]{fread}.}
 }
 \description{
