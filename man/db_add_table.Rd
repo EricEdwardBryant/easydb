@@ -4,14 +4,15 @@
 \alias{db_add_table}
 \title{Add a table and write to a database.}
 \usage{
-db_add_table(src, tbl_name, tbl_path, ...)
+db_add_table(tbl_name, tbl_path, src, overwrite = !append,
+  append = !overwrite, ...)
 }
 \arguments{
-\item{src}{A database source.}
-
 \item{tbl_name}{String. The name of the table.}
 
 \item{tbl_path}{String. The path to the table.}
+
+\item{src}{A database source.}
 
 \item{...}{Further arguments passed to \link[data.table]{fread}.}
 }

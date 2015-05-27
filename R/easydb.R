@@ -6,31 +6,30 @@
 #' @param cnf String. A path to easydb configuration file.
 #'
 #' @export
-#' @importFrom assertthat is.string assert_that
-#' @importFrom dplyr src_sqlite
+#' @importFrom assertthat is.string is.dir assert_that
+#' @importFrom dplyr src_sqlite bind_rows
 #' @importFrom yaml yaml.load_file
 
 db_build <- function(cnf) {
-  assert_that(is.string(cnf))
+  assert_that(is.string(cnf), file.exists(cnf))
   dir    <- dirname(cnf)
   config <- yaml.load_file(cnf)
   tbls   <- config$table
-  dbname <- paste0(config$name, '.sqlite')
 
   # DB is written relative to cnf
   old <- setwd(dirname(cnf))
-  src <- src_sqlite(dbname, create = TRUE)
+  src <- src_sqlite(config$name, create = TRUE)
 
   for (tbl in names(tbls)) {
     tbl_path <- tbls[[tbl]]
-    if (is_dir(tbl_path)) {
+    if (is.dir(tbl_path)) {
       tbl_path %>%
-        list.files %>%
+        list.files(full.names = TRUE) %>%
         lapply(fread) %>%
         bind_rows %>%
-        dbWriteTable(src$con, tbl_name, ., overwrite = TRUE, row.names = FALSE)
+        db_write_table(tbl, src, overwrite = TRUE)
     } else {
-      db_add_table(src, tbl, tbl_path)
+      db_add_table(tbl, tbl_path, src, overwrite = TRUE)
     }
   }
   on.exit(setwd(old))
@@ -54,12 +53,16 @@ db_build <- function(cnf) {
 #' @importFrom dplyr is.src %>%
 #' @importFrom data.table fread
 #' @importFrom assertthat assert_that is.string
-#' @importFrom DBI dbWriteTable
 
-db_add_table <- function(src, tbl_name, tbl_path, ...) {
-  assert_that(is.src(src), is.string(tbl_name), is.string(tbl_path))
-  src$con %>%
-    dbWriteTable(tbl_name, fread(tbl_path, ...), overwrite = T, row.names = F)
+db_add_table <- function(tbl_name, tbl_path, src, overwrite = !append,
+                         append = !overwrite, ...) {
+  assert_that(
+    is.src(src), is.string(tbl_name), is.string(tbl_path), is.flag(overwrite),
+    is.flag(append)
+  )
+  tbl_path %>%
+    fread(...) %>%
+    db_write_table(tbl_name, src, overwrite = overwrite, append = append)
 }
 
 
@@ -113,4 +116,20 @@ db_dump <- function(src, dir) {
 }
 
 #--utils-----------------------------------------------------------------------
-is_dir <- function(path) file.info(path)$isdir
+
+#' @importFrom assertthat assert_that is.string is.flag
+#' @importFrom dplyr %>%
+#' @importFrom DBI dbWriteTable
+
+db_write_table <- function(tbl, tbl_name, src, overwrite = !append,
+                           append = !overwrite) {
+  assert_that(
+    is.string(tbl_name), is.src(src), is.flag(overwrite), is.flag(append),
+    tbl %>% inherits('data.frame')
+  )
+  class(tbl) <- 'data.frame'
+  dbWriteTable(
+    src$con, tbl_name, tbl, overwrite = overwrite, append = append,
+    row.names = FALSE
+  )
+}
