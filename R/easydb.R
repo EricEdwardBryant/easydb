@@ -20,16 +20,16 @@ db_build <- function(cnf) {
   old <- setwd(dirname(cnf))
   src <- src_sqlite(config$name, create = TRUE)
 
-  for (tbl in names(tbls)) {
-    tbl_path <- tbls[[tbl]]
+  for (tbl_name in names(tbls)) {
+    tbl_path <- tbls[[tbl_name]]
     if (is.dir(tbl_path)) {
       tbl_path %>%
         list.files(full.names = TRUE) %>%
         lapply(fread) %>%
         bind_rows %>%
-        db_write_table(tbl, src, overwrite = TRUE)
+        db_write_table(tbl_name, src, overwrite = TRUE)
     } else {
-      db_add_table(tbl, tbl_path, src, overwrite = TRUE)
+      db_import_table(tbl_path, tbl_name, src, overwrite = TRUE)
     }
   }
   on.exit(setwd(old))
@@ -37,15 +37,15 @@ db_build <- function(cnf) {
 }
 
 
-#--db_add_table----------------------------------------------------------------
-#' Add a table and write to a database.
+#--db_import_table----------------------------------------------------------------
+#' Import a table from text file to database.
 #'
 #' Reads a plain text table and writes it to a database. Future versions will
 #' automate chuncked reads for very large tables. Currently uses
 #' \link[data.table]{fread} for quickly reading plain text tables.
 #'
-#' @param tbl_name String. The name of the table.
 #' @param tbl_path String. The path to the table.
+#' @param tbl_name String. The name of the table.
 #' @param src A database source.
 #' @param overwrite Flag. Should an existing table be overwritten? Defaults to
 #' \code{!append}
@@ -58,7 +58,7 @@ db_build <- function(cnf) {
 #' @importFrom data.table fread
 #' @importFrom assertthat assert_that is.string
 
-db_add_table <- function(tbl_name, tbl_path, src, overwrite = !append,
+db_import_table <- function(tbl_path, tbl_name, src, overwrite = !append,
                          append = !overwrite, ...) {
   assert_that(
     is.src(src), is.string(tbl_name), is.string(tbl_path), is.flag(overwrite),
