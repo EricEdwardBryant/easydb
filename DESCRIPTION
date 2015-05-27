@@ -7,5 +7,5 @@ Authors@R: person("Eric", "Bryant", email = "eeb2139@columbia.edu", role = c("au
 Description: Easily create and dump SQLite databases to and from plain text tables.
 License: GPL-3
 LazyData: TRUE
-Imports: DBI, assertthat, data.table, dplyr, yaml
+Imports: DBI, assertthat, data.table, dplyr, yaml, magrittr
 Suggests: testthat

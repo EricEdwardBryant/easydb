@@ -21,16 +21,7 @@ db_build <- function(cnf) {
   src <- src_sqlite(config$name, create = TRUE)
 
   for (tbl_name in names(tbls)) {
-    tbl_path <- tbls[[tbl_name]]
-    if (is.dir(tbl_path)) {
-      tbl_path %>%
-        list.files(full.names = TRUE) %>%
-        lapply(fread) %>%
-        bind_rows %>%
-        db_write_table(tbl_name, src, overwrite = TRUE)
-    } else {
-      db_import_table(tbl_path, tbl_name, src, overwrite = TRUE)
-    }
+    db_import_table(tbls[[tbl_name]], tbl_name, src, overwrite = TRUE)
   }
   on.exit(setwd(old))
   return(src)
@@ -56,7 +47,8 @@ db_build <- function(cnf) {
 #' @export
 #' @importFrom dplyr is.src %>%
 #' @importFrom data.table fread
-#' @importFrom assertthat assert_that is.string
+#' @importFrom magrittr extract
+#' @importFrom assertthat assert_that is.string is.flag is.dir
 
 db_import_table <- function(tbl_path, tbl_name, src, overwrite = !append,
                          append = !overwrite, ...) {
@@ -64,9 +56,18 @@ db_import_table <- function(tbl_path, tbl_name, src, overwrite = !append,
     is.src(src), is.string(tbl_name), is.string(tbl_path), is.flag(overwrite),
     is.flag(append)
   )
-  tbl_path %>%
-    fread(...) %>%
-    db_write_table(tbl_name, src, overwrite = overwrite, append = append)
+  if (is.dir(tbl_path)) {
+    tbl_path %>%
+      list.files(full.names = TRUE) %>%
+      extract(!sapply(., is.dir)) %>%  # remove directories
+      lapply(fread) %>%
+      bind_rows %>%
+      db_write_table(tbl_name, src, overwrite = overwrite, append = append)
+  } else {
+    tbl_path %>%
+      fread(...) %>%
+      db_write_table(tbl_name, src, overwrite = overwrite, append = append)
+  }
 }
 
 
