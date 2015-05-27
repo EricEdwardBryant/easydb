@@ -1,3 +1,6 @@
+#' @import dplyr yaml assertthat
+NULL
+
 #--db_build--------------------------------------------------------------------
 #' Build a database given a configuration file
 #'
@@ -6,9 +9,6 @@
 #' @param cnf String. A path to easydb configuration file.
 #'
 #' @export
-#' @importFrom assertthat is.string is.dir assert_that
-#' @importFrom dplyr src_sqlite bind_rows
-#' @importFrom yaml yaml.load_file
 
 db_build <- function(cnf) {
   assert_that(is.string(cnf), file.exists(cnf))
@@ -44,11 +44,9 @@ db_build <- function(cnf) {
 #' \code{!overwrite}.
 #' @param ... Further arguments passed to \link[data.table]{fread}.
 #'
-#' @export
-#' @importFrom dplyr is.src %>%
 #' @importFrom data.table fread
 #' @importFrom magrittr extract
-#' @importFrom assertthat assert_that is.string is.flag is.dir
+#' @export
 
 db_import_table <- function(tbl_path, tbl_name, src, overwrite = !append,
                          append = !overwrite, ...) {
@@ -80,7 +78,6 @@ db_import_table <- function(tbl_path, tbl_name, src, overwrite = !append,
 #' @param cnf String. A path to easydb configuration file.
 #'
 #' @export
-#' @importFrom yaml yaml.load_file
 
 db_update <- function(cnf) {
   assert_that(is.string(cnf), file.exists(cnf))
@@ -110,8 +107,6 @@ db_update <- function(cnf) {
 #' @param dir String. Directory to write CSVs.
 #'
 #' @export
-#' @importFrom dplyr %>% db_list_tables tbl collect is.src
-#' @importFrom assertthat is.string
 
 db_dump <- function(src, dir) {
   assert_that(is.src(src), is.string(dir))
@@ -128,10 +123,7 @@ db_dump <- function(src, dir) {
 
 #--utils-----------------------------------------------------------------------
 
-#' @importFrom assertthat assert_that is.string is.flag
-#' @importFrom dplyr %>%
 #' @importFrom DBI dbWriteTable
-
 db_write_table <- function(tbl, tbl_name, src, overwrite = !append,
                            append = !overwrite) {
   assert_that(
