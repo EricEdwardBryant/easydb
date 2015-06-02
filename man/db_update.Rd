@@ -7,7 +7,8 @@
 db_update(cnf)
 }
 \arguments{
-\item{cnf}{String. A path to easydb configuration file.}
+\item{cnf}{Path to an EasyDB configuration file, or the result of
+\link{db_config}.}
 }
 \description{
 Updates plain text source tables by evaluating R expressions in an easydb

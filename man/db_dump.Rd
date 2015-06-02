@@ -4,12 +4,13 @@
 \alias{db_dump}
 \title{Dump an SQLite database to CSVs}
 \usage{
-db_dump(src, dir)
+db_dump(cnf, dir)
 }
 \arguments{
-\item{src}{A database source.}
+\item{cnf}{Path to an EasyDB configuration file, or the result of
+\link{db_config}.}
 
-\item{dir}{String. Directory to write CSVs.}
+\item{dir}{Directory to write CSVs.}
 }
 \description{
 Dumps each table in an SQLite database to CSVs

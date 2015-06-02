@@ -84,12 +84,12 @@ src_sqlite('path/to/example.sqlite') %>% db_dump('path/to/dump')
 
 # A silly example
 
-`db_update` returns `path/to/config.yaml` so you can easily pipe to
-`db_build` after updating. And since `db_build` returns a `src` connection, you
-can immediately begin querying your new database. The following silly example
-takes a path to a database configuration file, updates source tables, builds a
-database, then writes those tables from the database to CSVs on your desktop -
-it's the circle of life.
+All `db_*` functions accept either a path to an EasyDB configuration file, or
+a `dbcnf` object as their first argument, and they all return a `dbcnf` object,
+which allows `db_*` functions to be chained together in a pipeline. The 
+following silly example takes a path to a database configuration file, updates 
+source tables, builds a database, then writes those tables from the database to
+CSVs on your desktop - it's the circle of life!
 
 ```r
 library(easydb)
