@@ -1,6 +1,6 @@
 # Easy Databases with *R*
 
-This is an *R* package designed to streamline import and export to/from SQLite
+This *R* package is designed to streamline import and export to/from SQLite
 databases. With this package you can:
 
 - Create a SQLite database from one simple configuration file.
@@ -75,11 +75,10 @@ db_update('path/to/config.yaml')
 ## Dump
 
 Sometimes we want to extract tables from a database. The function `db_dump` 
-will to just that given a [dplyr](https://github.com/hadley/dplyr) `src`.
+will do just that.
 
 ```r
-library(dplyr)
-src_sqlite('path/to/example.sqlite') %>% db_dump('path/to/dump')
+db_dump('path/to/config.yaml', 'path/to/dump')
 ```
 
 # A silly example
