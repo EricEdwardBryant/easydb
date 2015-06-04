@@ -3,7 +3,19 @@ set_class <- function(obj, ...) { class(obj) <- c(...); return(obj) }
 
 add_to_list <- function(list, ...) c(list, list(...))
 
+#-- db_write_table ------------------------------------------------------------
+# Write a table to a database
+# 
+# Coerces tbl objects to 'data.frame' and uses src object for connection
+#
+# @param tbl Any object that inherits the 'data.frame' class.
+# @param tbl_name The name of the table.
+# @param src A 'src' object (e.g. the result of \code{src_sqlite()})
+# @param overwrite Flag. Whether to overwrite an existing table.
+# @param append Flag. Whether to append to an existing table.
+#
 #' @importFrom DBI dbWriteTable
+
 db_write_table <- function(tbl, tbl_name, src, overwrite = !append,
                            append = !overwrite) {
   assert_that(
@@ -17,7 +29,7 @@ db_write_table <- function(tbl, tbl_name, src, overwrite = !append,
   )
 }
 
-#--db_import_table----------------------------------------------------------------
+#-- db_import_table -----------------------------------------------------------
 # Import a table from text file to database.
 #
 # Reads a plain text table and writes it to a database. Future versions will

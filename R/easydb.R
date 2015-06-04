@@ -1,6 +1,20 @@
 #' @import dplyr yaml assertthat
 NULL
 
+#-- src_easydb ----------------------------------------------------------------
+#' Connect to an EasyDB
+#'
+#' Connects to an EasyDB source, and builds the database if it has not been
+#'
+#' @export
+src_easydb <- function(cnf, update = FALSE) {
+  if (!inherits(cnf, 'dbcnf')) cnf <- db_config(cnf)
+  if (update) { cnf %>% db_update %>% db_build }
+  if (!file.exists(cnf$db)) db_build(cnf)
+  src_sqlite(cnf$db)
+}
+
+#-- db_config -----------------------------------------------------------------
 #' Read an EasyDB configuration file
 #'
 #' Reads an EasyDB configuration file and returns a 'dbcnf' object.
@@ -24,7 +38,7 @@ db_config <- function(cnf) {
     set_class('dbcnf', class(.))
 }
 
-#--db_build--------------------------------------------------------------------
+#-- db_build ------------------------------------------------------------------
 #' Build a database given a configuration file
 #'
 #' Builds an SQLite database given an EasyDB configuration file.
@@ -40,16 +54,18 @@ db_build <- function(cnf) {
   # DB is written relative to cnf
   old <- setwd(cnf$dir)
   src <- src_sqlite(cnf$name, create = TRUE)
-
+  message('Building ', cnf$name, ' at:\n', cnf$db)
   for (tbl_name in names(cnf$table)) {
+    message('Importing ', tbl_name, ' ... ', appendLF = F)
     db_import_table(cnf$table[[tbl_name]], tbl_name, src, overwrite = TRUE)
+    message('OK')
   }
   on.exit(setwd(old))
   return(invisible(cnf))
 }
 
 
-#--db_update------------------------------------------------------------
+#-- db_update -----------------------------------------------------------------
 #' Run database update expressions
 #'
 #' Updates plain text source tables by evaluating R expressions in an easydb
@@ -72,14 +88,18 @@ db_update <- function(cnf) {
     warning('"update:" field should be a list of "name: expression" pairs. ',
             'No updates were performed.')
   } else {
-    for (name in names(cnf$update)) eval(parse(text = cnf$update[[name]]))
+    for (name in names(cnf$update)) {
+      message('Updating ', name, '...', appendLF = F)
+      eval(parse(text = cnf$update[[name]]))
+      message('OK')
+    }
   }
   on.exit(setwd(old))
   return(invisible(cnf))
 }
 
 
-#--db_dump---------------------------------------------------------------------
+#-- db_dump -------------------------------------------------------------------
 #' Dump an SQLite database to CSVs
 #'
 #' Dumps each table in an SQLite database to CSVs
@@ -98,10 +118,11 @@ db_dump <- function(cnf, dir) {
   tbl_names <- db_list_tables(src$con)
 
   for (tbl_name in tbl_names) {
-    src %>% tbl(tbl_name) %>% collect %>%
-      write.csv(paste0(dir, '/', tbl_name, '.csv'), row.names = FALSE)
+    to <- paste0(dir, '/', tbl_name, '.csv')
+    message('Writing ', to, ' ... ', appendLF = F)
+    src %>% tbl(tbl_name) %>% collect %>% write.csv(to, row.names = FALSE)
+    message('OK')
   }
-
   return(invisible(cnf))
 }
 
