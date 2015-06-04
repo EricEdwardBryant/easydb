@@ -2,15 +2,15 @@
 % Please edit documentation in R/easydb.R
 \name{db_config}
 \alias{db_config}
-\title{Read an EasyDB configuration file}
+\title{Read an easydb configuration file}
 \usage{
 db_config(cnf)
 }
 \arguments{
-\item{cnf}{Path to an EasyDB configuration file, or the result of
+\item{cnf}{Path to an easydb configuration file, or the result of
 \link{db_config}.}
 }
 \description{
-Reads an EasyDB configuration file and returns a 'dbcnf' object.
+Reads an easydb configuration file and returns a 'dbcnf' object.
 }
 

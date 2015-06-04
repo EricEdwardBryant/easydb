@@ -2,9 +2,9 @@
 NULL
 
 #-- src_easydb ----------------------------------------------------------------
-#' Connect to an EasyDB
+#' Connect to an easydb
 #'
-#' Connects to an EasyDB source, and builds the database if it has not been
+#' Connects to an easydb source, and builds the database if it has not been
 #'
 #' @export
 src_easydb <- function(cnf, update = FALSE) {
@@ -15,11 +15,11 @@ src_easydb <- function(cnf, update = FALSE) {
 }
 
 #-- db_config -----------------------------------------------------------------
-#' Read an EasyDB configuration file
+#' Read an easydb configuration file
 #'
-#' Reads an EasyDB configuration file and returns a 'dbcnf' object.
+#' Reads an easydb configuration file and returns a 'dbcnf' object.
 #'
-#' @param cnf Path to an EasyDB configuration file, or the result of
+#' @param cnf Path to an easydb configuration file, or the result of
 #' \link{db_config}.
 #'
 #' @export
@@ -39,11 +39,11 @@ db_config <- function(cnf) {
 }
 
 #-- db_build ------------------------------------------------------------------
-#' Build a database given a configuration file
+#' Build an easydb
 #'
-#' Builds an SQLite database given an EasyDB configuration file.
+#' Builds an SQLite database given an easydb configuration file.
 #'
-#' @param cnf Path to an EasyDB configuration file, or the result of
+#' @param cnf Path to an easydb configuration file, or the result of
 #' \link{db_config}.
 #'
 #' @export
@@ -66,12 +66,12 @@ db_build <- function(cnf) {
 
 
 #-- db_update -----------------------------------------------------------------
-#' Run database update expressions
+#' Run updates for an easydb
 #'
 #' Updates plain text source tables by evaluating R expressions in an easydb
 #' configuration file.
 #'
-#' @param cnf Path to an EasyDB configuration file, or the result of
+#' @param cnf Path to an easydb configuration file, or the result of
 #' \link{db_config}.
 #'
 #' @export
@@ -100,11 +100,11 @@ db_update <- function(cnf) {
 
 
 #-- db_dump -------------------------------------------------------------------
-#' Dump an SQLite database to CSVs
+#' Dump an easydb database to CSVs
 #'
 #' Dumps each table in an SQLite database to CSVs
 #'
-#' @param cnf Path to an EasyDB configuration file, or the result of
+#' @param cnf Path to an easydb configuration file, or the result of
 #' \link{db_config}.
 #' @param dir Directory to write CSVs.
 #'

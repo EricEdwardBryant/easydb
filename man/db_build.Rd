@@ -2,15 +2,15 @@
 % Please edit documentation in R/easydb.R
 \name{db_build}
 \alias{db_build}
-\title{Build a database given a configuration file}
+\title{Build an easydb}
 \usage{
 db_build(cnf)
 }
 \arguments{
-\item{cnf}{Path to an EasyDB configuration file, or the result of
+\item{cnf}{Path to an easydb configuration file, or the result of
 \link{db_config}.}
 }
 \description{
-Builds an SQLite database given an EasyDB configuration file.
+Builds an SQLite database given an easydb configuration file.
 }
 

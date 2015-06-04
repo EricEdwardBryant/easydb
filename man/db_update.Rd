@@ -2,12 +2,12 @@
 % Please edit documentation in R/easydb.R
 \name{db_update}
 \alias{db_update}
-\title{Run database update expressions}
+\title{Run updates for an easydb}
 \usage{
 db_update(cnf)
 }
 \arguments{
-\item{cnf}{Path to an EasyDB configuration file, or the result of
+\item{cnf}{Path to an easydb configuration file, or the result of
 \link{db_config}.}
 }
 \description{

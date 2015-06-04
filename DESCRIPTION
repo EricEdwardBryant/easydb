@@ -1,6 +1,6 @@
 Package: easydb
 Type: Package
-Title: Easy SQLite database management
+Title: Easy SQLite database creation
 Version: 0.0.9000
 Date: 2015-05-26
 Authors@R: person("Eric", "Bryant", email = "eeb2139@columbia.edu", role = c("aut", "cre"))

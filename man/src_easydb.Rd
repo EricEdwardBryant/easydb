@@ -2,11 +2,11 @@
 % Please edit documentation in R/easydb.R
 \name{src_easydb}
 \alias{src_easydb}
-\title{Connect to an EasyDB}
+\title{Connect to an easydb}
 \usage{
 src_easydb(cnf, update = FALSE)
 }
 \description{
-Connects to an EasyDB source, and builds the database if it has not been
+Connects to an easydb source, and builds the database if it has not been
 }
 
