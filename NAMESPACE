@@ -3,6 +3,7 @@
 S3method(print,dbcnf)
 export(db_build)
 export(db_config)
+export(db_doctor)
 export(db_dump)
 export(db_update)
 export(src_easydb)

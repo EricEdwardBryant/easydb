@@ -34,10 +34,10 @@ This file is written in [YAML](http://www.yaml.org/spec/1.2/spec.html) (if you'v
 a little YAML). Below is an example configuration file.
 
 ```yaml
-## Update scripts and table paths are relative to this configuration file
+## All paths are relative to this configuration file
 name: example.sqlite
 
-update:  # table_name: R expression
+update:  # update_name: R expression
   cars: write.csv(cars, 'cars.csv', row.names = FALSE)
   organisms: source('organisms.R')
 
@@ -48,6 +48,9 @@ table:   # table_name: path/to/table.csv
 
 keys:    # table_name: field1, field2, field3
   organisms: ncbi_taxonomy_id
+
+test:    # test_name: R expression
+  fields_exist: source('check-fields.R')
 ```
 
 ## Build
@@ -70,6 +73,23 @@ Every configuration entry under `update:` will be parsed and evaluated as an
 
 ```r
 db_update('path/to/config.yaml')
+```
+
+## Doctor
+
+Keys and tests can be specified in your configuration file. The function 
+`db_doctor` will run all tests, and check that specified keys are unique.
+
+```r
+db_doctor('path/to/config.yaml')
+```
+
+```
+## Checking keys for systems table... Duplicated keys:
+##         system_id row
+## 1 BIOGRID:0000067  29
+## 2 BIOGRID:0000067  30
+## Checking keys for organisms table... OK
 ```
 
 ## Dump

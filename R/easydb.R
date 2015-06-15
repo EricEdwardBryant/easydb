@@ -89,7 +89,7 @@ db_update <- function(cnf) {
             'No updates were performed.')
   } else {
     for (name in names(cnf$update)) {
-      message('Updating ', name, '...', appendLF = F)
+      message('Updating ', name, ' ... ', appendLF = F)
       eval(parse(text = cnf$update[[name]]))
       message('OK')
     }
@@ -126,3 +126,20 @@ db_dump <- function(cnf, dir) {
   return(invisible(cnf))
 }
 
+
+#-- db_doctor -----------------------------------------------------------------
+#' Perform checkup on database
+#'
+#' Runs all tests and checks for duplicated keys.
+#'
+#' @param cnf Path to an easydb configuration file, or the result of
+#' \link{db_config}.
+#'
+#' @export
+
+db_doctor <- function(cnf) {
+  if (!inherits(cnf, 'dbcnf')) cnf <- db_config(cnf)
+  run_tests(cnf)
+  check_keys(cnf)
+  return(invisible(cnf))
+}
