@@ -1,37 +1,33 @@
 # Easy Databases with *R*
 
-This *R* package is designed to streamline import and export to/from SQLite
-databases. With this package you can:
+This *R* package makes it easy to setup a SQLite database using plain text 
+tables. With this package you can:
 
 - Create a SQLite database from one simple configuration file.
 - Update your data from remote sources with a single command.
-- Dump tables in a database to CSVs.
-- TODO: Specify keys.
-- TODO: Visualize a database schema.
+- Dump tables in a database to CSVs
+- Run user specified database tests
 
-# Motivation
+**Warning:** The current implementation only supports tables that can be read
+by `data.table::fread`. Support for very large tables that do not fit into 
+active memory will be included in a future version.
 
-I like to store data in plain text so I can easily version it with Git.
-But, this all starts to become a mess as my collection of tables grows.
-Databases and RData files would work nicely, but they don't play so well with
-Git. So, this package makes it easy to generate a database from plain-text 
-tables.
+# Installation
 
-# Getting Started
-
-This package is not yet available on CRAN, but you can easily install it using
+This package is not available on CRAN, but you can easily install it using
 [devtools](https://github.com/hadley/devtools).
 
 ```r
 if (!require(devtools)) install.packages('devtools')
 devtools::install_github('ericedwardbryant/easydb')
-library(easydb)
 ```
 
+# Setup
+
 To build a database, all you need to do is create an easydb configuration file.
-This file is written in [YAML](http://www.yaml.org/spec/1.2/spec.html) (if you've written any
-[Rmarkdown](http://rmarkdown.rstudio.com) documents then you know how to write
-a little YAML). Below is an example configuration file.
+This file is written in [YAML](http://www.yaml.org/spec/1.2/spec.html) (the 
+same syntax used in the metadata section of [Rmarkdown](http://rmarkdown.rstudio.com) 
+documents). Below is an example configuration file.
 
 ```yaml
 ## All paths are relative to this configuration file
@@ -53,6 +49,18 @@ test:    # test_name: R expression
   fields_exist: source('check-fields.R')
 ```
 
+Currently valid fields include:
+
+- **name** - a file path for the SQLite database
+- **update** - a list of `name: value` pairs that specify an update name and an 
+               *R* expression
+- **table** - a list of `name: value` pairs that specify a table name and a 
+              path to a table (readable by `data.table::fread`)
+- **keys** - a list of `name: value` pairs that specify a table name and an 
+             array of fields to be used as keys (i.e. distinct IDs)
+- **test** - a list of `name: value` pairs that specify a test name and an *R* 
+             expression
+
 ## Build
 
 Once you have created your configuration file, you can build your database in
@@ -68,8 +76,7 @@ db_build('path/to/config.yaml')
 
 Often times data in a table will need to be updated from a remote source. 
 The function `db_update` provides a means for updating your plain-text tables. 
-Every configuration entry under `update:` will be parsed and evaluated as an 
-*R* expression. 
+Every entry under `update:` will be parsed and evaluated as an *R* expression. 
 
 ```r
 db_update('path/to/config.yaml')
@@ -103,18 +110,23 @@ db_dump('path/to/config.yaml', 'path/to/dump')
 
 # A silly example
 
-All `db_*` functions accept either a path to an EasyDB configuration file, or
+All `db_*` functions accept either a path to an easydb configuration file, or
 a `dbcnf` object as their first argument, and they all return a `dbcnf` object,
 which allows `db_*` functions to be chained together in a pipeline. The 
 following silly example takes a path to a database configuration file, updates 
 source tables, builds a database, then writes those tables from the database to
-CSVs on your desktop - it's the circle of life!
+CSVs on your desktop, and finally connects to the database as a 
+[dplyr src](http://cran.r-project.org/web/packages/dplyr/vignettes/databases.html).
 
 ```r
 library(easydb)
 
-'path/to/config.yaml' %>%
-  db_update %>%
-  db_build %>%
-  db_dump('~/Desktop')
+src <- 
+  'path/to/config.yaml' %>%
+  db_config %>%             # reads the configuration file
+  db_update %>%             # runs updates
+  db_build %>%              # imports tables
+  db_doctor %>%             # runs tests and checks keys
+  db_dump('~/Desktop') %>%  # writes tables to Desktop
+  src_easydb()              # connects to db as dplyr src
 ```
