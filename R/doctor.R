@@ -13,11 +13,16 @@ check_keys <- function(cnf) {
     db <- src_sqlite(cnf$db)
     for (name in names(cnf$keys)) {
       message('Checking keys for ', name, ' table... ', appendLF = F)
-      tbl  <- db %>% tbl(name) %>% select_(cnf$keys[[name]]) %>% collect
+      tbl  <- db %>% tbl(name) %>% select_(.dots = cnf$keys[[name]]) %>% collect
       dups <- duplicated(tbl) | duplicated(tbl, fromLast = TRUE)
       if (any(dups)) {
         message('Duplicated keys:')
-        tbl %>% mutate(row = 1:n()) %>% filter_(~dups) %>% as.data.frame %>% print
+        tbl %>%
+          mutate(row = 1:n()) %>%
+          filter_(~dups) %>%
+          arrange_(.dots = cnf$keys[[name]]) %>%
+          as.data.frame %>%
+          print
       } else {
         message('OK')
       }
