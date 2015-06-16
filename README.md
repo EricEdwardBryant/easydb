@@ -5,8 +5,8 @@ tables. With this package you can:
 
 - Create a SQLite database from one simple configuration file.
 - Update your data from remote sources with a single command.
-- Dump tables in a database to CSVs
-- Run user specified database tests
+- Dump tables in a database to CSVs.
+- Run user specified database tests.
 
 **Warning:** The current implementation only supports tables that can be read
 by `data.table::fread`. Support for very large tables that do not fit into 
@@ -51,15 +51,18 @@ test:    # test_name: R expression
 
 Currently valid fields include:
 
-- **name** - a file path for the SQLite database
+- **name** - a file path for the SQLite database.
 - **update** - a list of `name: value` pairs that specify an update name and an 
-               *R* expression
+               *R* expression. These expressions are executed in order by 
+               `db_update`.
 - **table** - a list of `name: value` pairs that specify a table name and a 
-              path to a table (readable by `data.table::fread`)
+              path to a table (tables are read by `data.table::fread`). If the 
+              path is a directory, the tables in this directory will be 
+              combined into a single table.
 - **keys** - a list of `name: value` pairs that specify a table name and an 
-             array of fields to be used as keys (i.e. distinct IDs)
+             array of fields to be used as keys.
 - **test** - a list of `name: value` pairs that specify a test name and an *R* 
-             expression
+             expression. These expressions are executed in order by `db_doctor`.
 
 ## Build
 
