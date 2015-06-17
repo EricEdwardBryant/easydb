@@ -138,6 +138,10 @@ db_dump <- function(cnf, dir) {
 
 db_doctor <- function(cnf) {
   if (!inherits(cnf, 'dbcnf')) cnf <- db_config(cnf)
+
+  # Test expressions are executed in the directory of cnf
+  old <- setwd(cnf$dir); on.exit(setwd(old))
+
   run_tests(cnf)
   check_keys(cnf)
   return(invisible(cnf))
