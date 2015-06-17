@@ -52,7 +52,8 @@ db_build <- function(cnf) {
   if (!inherits(cnf, 'dbcnf')) cnf <- db_config(cnf)
 
   # DB is written relative to cnf
-  old <- setwd(cnf$dir)
+  old <- setwd(cnf$dir); on.exit(setwd(old))
+
   src <- src_sqlite(cnf$name, create = TRUE)
   message('Building ', cnf$name, ' at:\n', cnf$db)
   for (tbl_name in names(cnf$table)) {
@@ -60,7 +61,6 @@ db_build <- function(cnf) {
     db_import_table(cnf$table[[tbl_name]], tbl_name, src, overwrite = TRUE)
     message('OK')
   }
-  on.exit(setwd(old))
   return(invisible(cnf))
 }
 
@@ -80,7 +80,7 @@ db_update <- function(cnf) {
   if (!inherits(cnf, 'dbcnf')) cnf <- db_config(cnf)
 
   # Update expressions are executed in the directory of cnf
-  old <- setwd(cnf$dir)
+  old <- setwd(cnf$dir); on.exit(setwd(old))
 
   if (is.null(cnf$update)) {
     warning('No "update:" field in configuration file: ', cnf)
@@ -94,7 +94,6 @@ db_update <- function(cnf) {
       message('OK')
     }
   }
-  on.exit(setwd(old))
   return(invisible(cnf))
 }
 
