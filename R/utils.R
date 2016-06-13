@@ -5,7 +5,7 @@ add_to_list <- function(list, ...) c(list, list(...))
 
 #-- db_write_table ------------------------------------------------------------
 # Write a table to a database
-# 
+#
 # Coerces tbl objects to 'data.frame' and uses src object for connection
 #
 # @param tbl Any object that inherits the 'data.frame' class.
@@ -36,7 +36,7 @@ db_write_table <- function(tbl, tbl_name, src, overwrite = !append,
 # automate chuncked reads for very large tables. Currently uses
 # \link[data.table]{fread} for quickly reading plain text tables.
 #
-# @param tbl_path String. The path to the table.
+# @param tbl_paths Character. The path or paths to the table.
 # @param tbl_name String. The name of the table.
 # @param src A database source.
 # @param overwrite Flag. Should an existing table be overwritten? Defaults to
@@ -48,22 +48,37 @@ db_write_table <- function(tbl, tbl_name, src, overwrite = !append,
 #' @importFrom data.table fread
 #' @importFrom magrittr extract
 
-db_import_table <- function(tbl_path, tbl_name, src, overwrite = !append,
+db_import_table <- function(tbl_paths, tbl_name, src, overwrite = !append,
                             append = !overwrite, ...) {
   assert_that(
-    is.src(src), is.string(tbl_name), is.string(tbl_path), is.flag(overwrite),
-    is.flag(append)
+    is.src(src), is.string(tbl_name), is.character(tbl_paths), is.flag(overwrite),
+    is.flag(append), length(tbl_paths) > 0
   )
-  if (is.dir(tbl_path)) {
-    tbl_path %>%
-      list.files(full.names = TRUE) %>%
-      extract(!sapply(., is.dir)) %>%  # remove directories
-      lapply(fread) %>%
-      bind_rows %>%
-      db_write_table(tbl_name, src, overwrite = overwrite, append = append)
-  } else {
-    tbl_path %>%
-      fread(...) %>%
-      db_write_table(tbl_name, src, overwrite = overwrite, append = append)
-  }
+
+  # Multiple table paths will be individually read/written to the database
+  # If a directory is provided then all files within this directory will be
+  # treated as if they are chunks of the same table
+  paths <- lapply(tbl_paths, function(p) {
+    if (is.dir(p)) {
+      files <- list.files(p, full.names = TRUE)
+      files <- files[!sapply(files, is.dir)] # remove directories
+    } else if (file.exists(p)) {
+      files <- p
+    } else {
+      warning('No file(s) found for:\n', p)
+      files <- NULL  # if file doesn't exist and isn't a directory
+    }
+    return(files)
+  })
+
+  # Will set to FALSE once first table is written
+  paths <- unlist(paths)
+
+  lapply(1:length(paths), function(i) {
+
+    # Read / write table
+    fread(paths[i], data.table = FALSE, ...) %>%
+      db_write_table(tbl_name, src, overwrite = if (i == 1) overwrite else FALSE)
+  })
+  return(invisible())
 }

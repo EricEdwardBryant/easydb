@@ -4,13 +4,16 @@ This *R* package makes it easy to setup a SQLite database using plain text
 tables. With this package you can:
 
 - Create a SQLite database from one simple configuration file.
-- Update your data from remote sources with a single command.
-- Dump tables in a database to CSVs.
-- Run user specified database tests.
+- Work with large tables that do not fit into active memory.
+- Easily update data from remote sources.
+- Write and run tests on your database.
+- Detect duplicate keys.
+- Dump tables in a SQLite database to CSVs.
+- (TODO) specify expected *R* data types and automatically convert when querying the database.
 
-**Warning:** The current implementation only supports tables that can be read
-by `data.table::fread`. Support for very large tables that do not fit into 
-active memory will be included in a future version.
+**Note:** Files are imported into the database one at a time using 
+`data.table::fread`. Very large tables that do not fit into memory can and 
+should be split into separate source files before building the database.
 
 # Installation
 
@@ -38,9 +41,14 @@ update:  # update_name: R expression
   organisms: source('organisms.R')
 
 table:   # table_name: path/to/table.csv
-  organisms: organisms.csv
   cars: cars.csv
   systems: systems.csv
+  organisms:
+    # Multiple paths will be combined into a single table
+    - organisms1.csv    
+    - organisms2.csv  
+    # All tables within a directory will be combined
+    - organisms       
 
 keys:    # table_name: field1, field2, field3
   organisms: ncbi_taxonomy_id
@@ -58,7 +66,9 @@ Currently valid fields include:
 - **table** - a list of `name: value` pairs that specify a table name and a 
               path to a table (tables are read by `data.table::fread`). If the 
               path is a directory, the tables in this directory will be 
-              combined into a single table.
+              combined into a single table. Multiple paths will be imported 
+              one at a time, allowing generation of very large tables that
+              can be queried on disk via `dplyr` and/or `RSQLite`.
 - **keys** - a list of `name: value` pairs that specify a table name and an 
              array of fields to be used as keys.
 - **test** - a list of `name: value` pairs that specify a test name and an *R* 

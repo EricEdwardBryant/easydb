@@ -6,7 +6,9 @@ update:
 table:
   cars: cars.csv
   systems: systems.csv
-  organisms: organisms   # a directory
+  organisms:         # Table name
+    - organisms      # a directory
+    - organisms.csv  # relative path
 
 keys:
   systems: system_id

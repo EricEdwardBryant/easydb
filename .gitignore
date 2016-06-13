@@ -2,3 +2,4 @@
 .Rhistory
 .RData
 *.sqlite
+*.DS_store
