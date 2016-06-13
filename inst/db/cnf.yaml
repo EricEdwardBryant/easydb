@@ -7,8 +7,9 @@ table:
   cars: cars.csv
   systems: systems.csv
   organisms:         # Table name
-    - organisms      # a directory
-    - organisms.csv  # relative path
+    - path: organisms         # a directory
+      pattern: organisms.\.csv  # relative path
+    - organisms.csv
 
 keys:
   systems: system_id

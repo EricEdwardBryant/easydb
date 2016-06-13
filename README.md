@@ -43,12 +43,19 @@ update:  # update_name: R expression
 table:   # table_name: path/to/table.csv
   cars: cars.csv
   systems: systems.csv
+  # Multiple paths are supported for a single table.
   organisms:
-    # Multiple paths will be combined into a single table
-    - organisms1.csv    
-    - organisms2.csv  
-    # All tables within a directory will be combined
-    - organisms       
+    # Paths can be specified for a single file
+    - organisms1.csv
+    # Or as a directory of files
+    - organisms
+    # Or as named arguments to ?list.files
+    - path: organisms
+      pattern: organisms.\.csv
+      ignore.case: yes
+    # E.g. match all CSV files in same directory as this configuration file
+    - pattern: \.csv$
+      recursive: no
 
 keys:    # table_name: field1, field2, field3
   organisms: ncbi_taxonomy_id

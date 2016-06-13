@@ -51,28 +51,32 @@ db_write_table <- function(tbl, tbl_name, src, overwrite = !append,
 db_import_table <- function(tbl_paths, tbl_name, src, overwrite = !append,
                             append = !overwrite, ...) {
   assert_that(
-    is.src(src), is.string(tbl_name), is.character(tbl_paths), is.flag(overwrite),
-    is.flag(append), length(tbl_paths) > 0
+    is.src(src), is.string(tbl_name), is.flag(overwrite), is.flag(append),
+    length(tbl_paths) > 0
   )
 
   # Multiple table paths will be individually read/written to the database
   # If a directory is provided then all files within this directory will be
   # treated as if they are chunks of the same table
   paths <- lapply(tbl_paths, function(p) {
-    if (is.dir(p)) {
+    if (!is.null(names(p))) {
+      # If names are specified then assume they are arguments to list.files
+      if (is.null(p$full.names)) p$full.names <- TRUE  # full names by default
+      if (is.null(p$recursive))  p$recursive  <- TRUE  # recursive by default
+      files <- do.call(list.files, p)
+      files <- files[!sapply(files, is.dir)]           # remove directories
+    } else if (is.dir(p)) {
       files <- list.files(p, full.names = TRUE)
-      files <- files[!sapply(files, is.dir)] # remove directories
-    } else if (file.exists(p)) {
-      files <- p
+      files <- files[!sapply(files, is.dir)]           # remove directories
     } else {
-      warning('No file(s) found for:\n', p)
-      files <- NULL  # if file doesn't exist and isn't a directory
+      files <- p
     }
     return(files)
   })
 
   # Will set to FALSE once first table is written
   paths <- unlist(paths)
+  if (length(paths) == 0) stop('No files found for table: ', tbl_name, call. = FALSE, '\nQuery: ', tbl_paths)
 
   lapply(1:length(paths), function(i) {
 
