@@ -6,25 +6,37 @@ add_to_list <- function(list, ...) c(list, list(...))
 #-- db_write_table ------------------------------------------------------------
 # Write a table to a database
 #
-# Coerces tbl objects to 'data.frame' and uses src object for connection
+# Coerces tbl objects to 'data.frame'
 #
 # @param tbl Any object that inherits the 'data.frame' class.
 # @param tbl_name The name of the table.
-# @param src A 'src' object (e.g. the result of \code{src_sqlite()})
+# @param con A DBI connection.
 # @param overwrite Flag. Whether to overwrite an existing table.
 # @param append Flag. Whether to append to an existing table.
 #
 #' @importFrom DBI dbWriteTable
 
-db_write_table <- function(tbl, tbl_name, src, overwrite = !append,
+db_write_table <- function(tbl,
+                           tbl_name,
+                           con,
+                           overwrite = !append,
                            append = !overwrite) {
   assert_that(
-    is.string(tbl_name), is.src(src), is.flag(overwrite), is.flag(append),
-    tbl %>% inherits('data.frame')
+    is.string(tbl_name),
+    DBI::dbIsValid(con),
+    is.flag(overwrite),
+    is.flag(append),
+    inherits(tbl, 'data.frame')
   )
+
   class(tbl) <- 'data.frame'
+
   dbWriteTable(
-    src$con, tbl_name, tbl, overwrite = overwrite, append = append,
+    con,
+    tbl_name,
+    tbl,
+    overwrite = overwrite,
+    append = append,
     row.names = FALSE
   )
 }
@@ -38,7 +50,7 @@ db_write_table <- function(tbl, tbl_name, src, overwrite = !append,
 #
 # @param tbl_paths Character. The path or paths to the table.
 # @param tbl_name String. The name of the table.
-# @param src A database source.
+# @param con A DBI connection.
 # @param overwrite Flag. Should an existing table be overwritten? Defaults to
 # \code{!append}
 # @param append Flag. Should an existing table be append? Defaults to
@@ -48,10 +60,17 @@ db_write_table <- function(tbl, tbl_name, src, overwrite = !append,
 #' @importFrom data.table fread
 #' @importFrom magrittr extract
 
-db_import_table <- function(tbl_paths, tbl_name, src, overwrite = !append,
-                            append = !overwrite, ...) {
+db_import_table <- function(tbl_paths,
+                            tbl_name,
+                            con,
+                            overwrite = !append,
+                            append = !overwrite,
+                            ...) {
   assert_that(
-    is.src(src), is.string(tbl_name), is.flag(overwrite), is.flag(append),
+    DBI::dbIsValid(con),
+    is.string(tbl_name),
+    is.flag(overwrite),
+    is.flag(append),
     length(tbl_paths) > 0
   )
 
@@ -82,7 +101,8 @@ db_import_table <- function(tbl_paths, tbl_name, src, overwrite = !append,
 
     # Read / write table
     fread(paths[i], data.table = FALSE, ...) %>%
-      db_write_table(tbl_name, src, overwrite = if (i == 1) overwrite else FALSE)
+      db_write_table(tbl_name, con, overwrite = if (i == 1) overwrite else FALSE)
   })
+
   return(invisible())
 }

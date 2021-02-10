@@ -11,7 +11,7 @@ src_easydb <- function(cnf, update = FALSE) {
   if (!inherits(cnf, 'dbcnf')) cnf <- db_config(cnf)
   if (update) { cnf %>% db_update %>% db_build }
   if (!file.exists(cnf$db)) db_build(cnf)
-  src_sqlite(cnf$db)
+  DBI::dbConnect(RSQLite::SQLite(), cnf$db)
 }
 
 #-- db_config -----------------------------------------------------------------
@@ -54,11 +54,11 @@ db_build <- function(cnf) {
   # DB is written relative to cnf
   old <- setwd(cnf$dir); on.exit(setwd(old))
 
-  src <- src_sqlite(cnf$name, create = TRUE)
+  con <- DBI::dbConnect(RSQLite::SQLite(), cnf$name)
   message('Building ', cnf$name, ' at:\n', cnf$db)
   for (tbl_name in names(cnf$table)) {
     message('Importing ', tbl_name, ' ... ', appendLF = F)
-    db_import_table(cnf$table[[tbl_name]], tbl_name, src, overwrite = TRUE)
+    db_import_table(cnf$table[[tbl_name]], tbl_name, con, overwrite = TRUE)
     message('OK')
   }
   return(invisible(cnf))
@@ -111,15 +111,18 @@ db_update <- function(cnf) {
 
 db_dump <- function(cnf, dir) {
   if (!inherits(cnf, 'dbcnf')) cnf <- db_config(cnf)
-  src <- src_sqlite(cnf$db)
+  con <- DBI::dbConnect(RSQLite::SQLite(), cnf$db)
 
-  assert_that(is.src(src), is.dir(dir))
-  tbl_names <- db_list_tables(src$con)
+  assert_that(DBI::dbIsValid(con), is.dir(dir))
+
+  tbl_names <- db_list_tables(con)
 
   for (tbl_name in tbl_names) {
     to <- paste0(dir, '/', tbl_name, '.csv')
     message('Writing ', to, ' ... ', appendLF = F)
-    src %>% tbl(tbl_name) %>% collect %>% write.csv(to, row.names = FALSE)
+
+    data.table::fwrite(collect(tbl(con, tbl_name)), to)
+
     message('OK')
   }
   return(invisible(cnf))
