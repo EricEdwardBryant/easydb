@@ -10,6 +10,7 @@ License: GPL-3
 LazyData: TRUE
 Imports:
     DBI,
+    RSQLite,
     assertthat,
     data.table,
     dplyr,
@@ -17,4 +18,4 @@ Imports:
     magrittr
 Suggests:
     testthat
-RoxygenNote: 5.0.1
+RoxygenNote: 7.1.1
