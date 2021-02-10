@@ -1,7 +1,7 @@
 Package: easydb
 Type: Package
 Title: Easy SQLite database creation
-Version: 0.1.1
+Version: 0.1.2
 Date: 2015-05-26
 Authors@R: person("Eric", "Bryant", email = "eeb2139@columbia.edu", role = c("aut", "cre"))
 Description: Easily create and dump SQLite databases to and from plain text
