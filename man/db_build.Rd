@@ -13,4 +13,3 @@ db_build(cnf)
 \description{
 Builds an SQLite database given an easydb configuration file.
 }
-

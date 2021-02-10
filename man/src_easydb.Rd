@@ -9,4 +9,3 @@ src_easydb(cnf, update = FALSE)
 \description{
 Connects to an easydb source, and builds the database if it has not been
 }
-

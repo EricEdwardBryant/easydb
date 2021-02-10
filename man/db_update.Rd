@@ -14,4 +14,3 @@ db_update(cnf)
 Updates plain text source tables by evaluating R expressions in an easydb
 configuration file.
 }
-

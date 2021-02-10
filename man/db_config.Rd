@@ -13,4 +13,3 @@ db_config(cnf)
 \description{
 Reads an easydb configuration file and returns a 'dbcnf' object.
 }
-

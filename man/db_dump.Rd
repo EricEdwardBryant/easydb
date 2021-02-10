@@ -15,4 +15,3 @@ db_dump(cnf, dir)
 \description{
 Dumps each table in an SQLite database to CSVs
 }
-

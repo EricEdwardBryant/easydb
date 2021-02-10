@@ -13,4 +13,3 @@ db_doctor(cnf)
 \description{
 Runs all tests and checks for duplicated keys.
 }
-
